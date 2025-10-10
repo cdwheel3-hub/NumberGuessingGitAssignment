@@ -22,6 +22,7 @@ public class GameEngine {
         reset();
     }
 
+
     public GuessResult makeGuess(int guess) {
         // Check if user wants to quit (negative number)
         if (guess < 0) {
@@ -36,24 +37,35 @@ public class GameEngine {
             return new GuessResult(true,
                     "Correct! You guessed it in " + attempts + " attempts.",
                     attempts);
+        } else if (attempts >= MAX_ATTEMPTS) {
+            gameOver = true;
+            return new GuessResult(false,
+                    "Game Over! You've used all " + MAX_ATTEMPTS
+                            + " attempts. The number was " + target + ".",
+                    attempts);
         } else {
+            int remaining = MAX_ATTEMPTS - attempts;
             String hint = getHint(guess);
             GuessResult result;
 
             if (guess < target) {
                 result = new GuessResult(false,
-                        "Too low! Try a higher number.",
+                        "Too low! Try a higher number. "
+                                + remaining + " attempts remaining.",
                         attempts);
             } else {
                 result = new GuessResult(false,
-                        "Too high! Try a lower number.",
+                        "Too high! Try a lower number. "
+                                + remaining + " attempts remaining.",
                         attempts);
             }
 
+            result.setRemainingAttempts(remaining);
             result.setHint(hint);
             return result;
         }
     }
+
 
     public void reset() {
         target = Utils.randomInt(min, max);
